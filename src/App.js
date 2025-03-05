@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Navbar from "./components/Navbar";
 
-function App() {
+import LoginModal from "./components/LoginModal";
+import RegisterModal from "./components/RegisterModal";
+import Home from "./components/Home";
+import Bookings from "./components/Bookings";
+export default function App() {
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Navbar user={user} setUser={setUser} setShowLogin={setShowLogin} setShowRegister={setShowRegister} />
+      <Routes>
+        <Route path="/" element={<Home user={user} setShowLogin={setShowLogin} />} />
+        <Route path="/bookings" element={<Bookings user={user} />} />
+      </Routes>
+      {showLogin && <LoginModal setShowLogin={setShowLogin} setUser={setUser} />}
+      {showRegister && <RegisterModal setShowRegister={setShowRegister} setUser={setUser} />}
+    </BrowserRouter>
   );
 }
-
-export default App;
